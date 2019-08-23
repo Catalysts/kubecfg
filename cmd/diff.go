@@ -24,11 +24,13 @@ import (
 const (
 	flagDiffStrategy = "diff-strategy"
 	flagIgnore       = "ignore"
+	flagOmitSecrets  = "omit-secrets"
 )
 
 func init() {
 	diffCmd.PersistentFlags().String(flagDiffStrategy, "all", "Diff strategy, all or subset.")
 	diffCmd.PersistentFlags().StringArray(flagIgnore, []string{}, "JSON Path to ignore when calculating diffs.")
+	diffCmd.PersistentFlags().Bool(flagOmitSecrets, false, "hide secret details when showing diff")
 	RootCmd.AddCommand(diffCmd)
 }
 
@@ -48,6 +50,11 @@ var diffCmd = &cobra.Command{
 		}
 
 		c.IgnorePaths, err = flags.GetStringArray(flagIgnore)
+		if err != nil {
+			return err
+		}
+
+		c.OmitSecrets, err = flags.GetBool(flagOmitSecrets)
 		if err != nil {
 			return err
 		}

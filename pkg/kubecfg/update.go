@@ -453,6 +453,10 @@ func walkObjects(client dynamic.Interface, disco discovery.DiscoveryInterface, l
 
 			log.Debugf("Listing %s", gvr)
 			obj, err := rc.List(listopts)
+			if errors.IsForbidden(err) {
+				log.Info("Skipping %s: cannot list resource", gvr)
+				continue
+			}
 			if err != nil {
 				return err
 			}
